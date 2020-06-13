@@ -7,13 +7,14 @@ extern uint32_t _sbss;
 extern uint32_t _ebss;
 
 #define START_RAM   0x20000000U
-#define SIZE_RAM    0x28000U
+#define SIZE_RAM    (160 * 1024) // 160K
 
 #define START_STACK ((START_RAM) + (SIZE_RAM))
 
 int main(void);
 
 void Reset_Handler(void);
+void Default_Handler(void);
 
 void NMI_Handler(void)                  __attribute__((weak, alias("Default_Handler")));
 void HardFault_Handler(void)            __attribute__((weak, alias("Default_Handler")));
@@ -196,6 +197,11 @@ uint32_t vectorTable[] __attribute__((section(".isr_vector"))) = {
     (uint32_t)I2C4_ER_Handler
 };
 
+void Default_Handler(void)
+{
+    while (1);
+}
+
 void Reset_Handler(void)
 {
     uint32_t data_size = (uint32_t)&_edata - (uint32_t)&_sdata;
@@ -217,9 +223,4 @@ void Reset_Handler(void)
     }
 
     main();
-}
-
-void Default_Handler(void)
-{
-    while(1);
 }

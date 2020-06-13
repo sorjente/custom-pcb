@@ -8,6 +8,8 @@
 #define LED_GPIO_PIN  GPIO13
 #define LED_RCC       RCC_GPIOB
 
+uint32_t test = 3;
+
 
 static void clock_setup (void)
 {

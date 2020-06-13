@@ -13,7 +13,7 @@ target extended-remote :4242
 
 # Flash program and load symbols
 load
-break main
+break Default_Handler
 
 # Run to main (first breakpoint)
 continue

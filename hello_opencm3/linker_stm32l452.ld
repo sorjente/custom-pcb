@@ -11,8 +11,8 @@ _size_flash = 0x80000;
 
 MEMORY
 {
-    FLASH (rx) : ORIGIN = _start_flash, LENGTH = _size_flash
     RAM (rwx) : ORIGIN = _start_ram, LENGTH = _size_ram
+    FLASH (rx) : ORIGIN = _start_flash, LENGTH = _size_flash
 }
 
 SECTIONS
@@ -22,7 +22,7 @@ SECTIONS
     {
         . = ALIGN(8);
         _stext = .; /* start of flash memory region (VMA) */
-        startup_stm32l452.o (.isr_vector)
+        *(.isr_vector)
         *(.text)
         *(.rodata)
         . = ALIGN(8);
