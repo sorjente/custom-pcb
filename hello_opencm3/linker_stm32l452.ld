@@ -1,8 +1,6 @@
-
 /* define the first executable instruction in an output file */
 ENTRY(Reset_Handler)
 
-/* end of stack (RAM) */
 _start_ram = 0x20000000;
 _size_ram = 0x28000;
 
@@ -22,7 +20,7 @@ SECTIONS
     {
         . = ALIGN(8);
         _stext = .; /* start of flash memory region (VMA) */
-        *(.isr_vector)
+        KEEP(*(.isr_vector))
         *(.text)
         *(.rodata)
         . = ALIGN(8);

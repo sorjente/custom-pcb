@@ -26,7 +26,7 @@ LIBNAME  = opencm3_stm32l4
 DEFS    += -DSTM32L4
 
 # Architecture-specific flags
-FP_FLAGS   ?= -mfloat-abi=hard
+FP_FLAGS   ?= -mfloat-abi=hard -mfpu=fpv4-sp-d16
 ARCH_FLAGS  = -mthumb -mcpu=cortex-m4 $(FP_FLAGS)
 
 # Sources
@@ -61,7 +61,7 @@ CSTD    ?= -std=c99
 CFLAGS += $(OPT) $(CXXSTD) $(DEBUG)
 CFLAGS += $(ARCH_FLAGS)
 CFLAGS += -Wall -Wextra -Wundef -g -fdata-sections -ffunction-sections
-CFLAGS += -std=c99 -nostdlib
+CFLAGS += -nostdlib
 CFLAGS += $(DEFS)
 
 # Linker flags
@@ -88,7 +88,7 @@ LDLIBS  += -Wl,--start-group -lc -lm -lgcc -lnosys -Wl,--end-group
 all: elf hex bin size
 
 # Various binaries
-elf:   $(BUILD_DIR) $(BUILD_DIR)/$(TARGET).elf
+elf:   libopencm3 $(BUILD_DIR) $(BUILD_DIR)/$(TARGET).elf
 bin:   $(BUILD_DIR)/$(TARGET).bin
 hex:   $(BUILD_DIR)/$(TARGET).hex
 list:  $(BUILD_DIR)/$(TARGET).list
@@ -124,6 +124,12 @@ $(SRC_DIR)/%.c: $(INC)
 $(BUILD_DIR):
 	@mkdir $(BUILD_DIR)/
 
+# Pull and build libopencm3 if not already built
+libopencm3:
+	@git submodule init
+	@git submodule update
+	@cd libopencm3 && make
+
 # Size info (.elf)
 size: elf
 	$(SIZE) $(BUILD_DIR)/$(TARGET).elf
@@ -137,5 +143,5 @@ clean:
 	rm -rf $(BUILD_DIR)
 
 
-.PHONY: all clean elf hex bin size flash
+.PHONY: all clean elf hex bin size flash libopencm3
 .SUFFIXES: .elf .bin .hex .srec .list .map
