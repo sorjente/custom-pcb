@@ -14,18 +14,12 @@ SRC_DIR = src
 # Includes directory
 INC_DIR = inc
 
-# Sources
-SRC = $(wildcard $(SRC_DIR)/*.c)
-# Includes
-INC = $(wildcard $(INC_DIR)/*.h)
-# Objects
-OBJ = $(patsubst $(SRC_DIR)/%.c, $(BUILD_DIR)/%.o, $(SRC))
-
 # libopencm3 path
 OPENCM3_DIR := ./libopencm3
 
 # Linker script
-LDSCRIPT = stm32l4.ld
+LDSCRIPT = linker_stm32l452.ld
+STARTUP = startup_stm32l452
 
 # MCU-specific lib
 LIBNAME  = opencm3_stm32l4
@@ -34,6 +28,14 @@ DEFS    += -DSTM32L4
 # Architecture-specific flags
 FP_FLAGS   ?= -mfloat-abi=hard
 ARCH_FLAGS  = -mthumb -mcpu=cortex-m4 $(FP_FLAGS)
+
+# Sources
+SRC = $(wildcard $(SRC_DIR)/*.c)
+# Includes
+INC = $(wildcard $(INC_DIR)/*.h)
+# Objects
+OBJ = $(patsubst $(SRC_DIR)/%.c, $(BUILD_DIR)/%.o, $(SRC))
+
 
 ## --------------------------------------------------------------------------------
 
@@ -59,7 +61,7 @@ CSTD    ?= -std=c99
 CFLAGS += $(OPT) $(CXXSTD) $(DEBUG)
 CFLAGS += $(ARCH_FLAGS)
 CFLAGS += -Wall -Wextra -Wundef -g -fdata-sections -ffunction-sections
-CFLAGS += -std=c99
+CFLAGS += -std=c99 -nostdlib
 CFLAGS += $(DEFS)
 
 # Linker flags
@@ -76,7 +78,7 @@ endif
 DEFS    += -I$(OPENCM3_DIR)/include
 LDFLAGS += -L$(OPENCM3_DIR)/lib
 LDLIBS  += -l$(LIBNAME)
-LDLIBS  += -Wl,--start-group -lc -lgcc -lnosys -Wl,--end-group
+LDLIBS  += -Wl,--start-group -lc -lm -lgcc -lnosys -Wl,--end-group
 
 ## --------------------------------------------------------------------------------
 
@@ -104,11 +106,15 @@ $(BUILD_DIR)/$(TARGET).list: elf
 	$(OBJDUMP) -S $(BUILD_DIR)/$(TARGET).elf > $@
 
 # .elf & .map files
-$(BUILD_DIR)/$(TARGET).elf $(BUILD_DIR)/$(TARGET).map: $(OBJ) $(LDSCRIPT)
-	$(LD) $(LDFLAGS) $(OBJ) $(LDLIBS) -o $@
+$(BUILD_DIR)/$(TARGET).elf $(BUILD_DIR)/$(TARGET).map: $(BUILD_DIR)/$(STARTUP).o $(OBJ) $(LDSCRIPT)
+	$(LD) $(LDFLAGS) $(BUILD_DIR)/$(STARTUP).o $(OBJ) $(LDLIBS) -o $@
 
 # .o/.c files
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+# startup file
+$(BUILD_DIR)/$(STARTUP).o: $(STARTUP).c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 # .c/.h files
@@ -132,4 +138,4 @@ clean:
 
 
 .PHONY: all clean elf hex bin size flash
-.SUFFIXES: .elf .bin .hex .srec .list .map 
+.SUFFIXES: .elf .bin .hex .srec .list .map
