@@ -68,6 +68,6 @@ to turn on/off the LED. A simple empty for loop is added to delay each toggle fo
 
 
 <!-- Links -->
-[1]: https://www.st.com/resource/en/reference_manual/\dm00151940-stm32l41xxx42xxx43xxx44xxx45xxx46xxx-advanced-armbased-32bit-mcus-stmicroelectronics.pdf
+[1]: https://www.st.com/resource/en/reference_manual/dm00151940-stm32l41xxx42xxx43xxx44xxx45xxx46xxx-advanced-armbased-32bit-mcus-stmicroelectronics.pdf
 [2]: https://www.st.com/content/ccc/resource/technical/document/reference_manual/group0/b0/ac/3e/8f/6d/21/47/af/DM00151940/files/DM00151940.pdf/jcr:content/translations/en.DM00151940.pdf
 [3]: https://www.st.com/resource/en/datasheet/stm32l452re.pdf
