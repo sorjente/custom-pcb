@@ -20,7 +20,7 @@ SECTIONS
     {
         . = ALIGN(8);
         _stext = .; /* start of flash memory region (VMA) */
-        KEEP(*(.isr_vector))
+        KEEP(*(.isr_vector)) /* force linker to keep this because it won't necessarily be referenced in the .o files */
         *(.text)
         *(.rodata)
         . = ALIGN(8);

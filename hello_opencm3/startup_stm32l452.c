@@ -212,11 +212,13 @@ void Reset_Handler(void)
 
     uint8_t *p_bss          = (uint8_t*)&_sbss;
 
+    // Copy .data to ram
     for (uint32_t i = 0; i < data_size; i++)
     {
         p_data_ram[i] = p_data_flash[i];
     }
 
+    // Initialize .bss to 0
     for (uint32_t i = 0; i < bss_size; i++)
     {
         p_bss[i] = 0U;
