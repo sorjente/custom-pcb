@@ -11,8 +11,7 @@ MCU. There are some sections we need to account for:
 
 1. `.text`: this entire area goes into the FLASH memory, and can only be read or executed.
     1. `.isr_vector`: the vector table which is essential to the MCU's startup. It's defined in the startup file, and
-       its spec can be found on the [STM32L4 Reference Manual](https://www.st.com/resource/en/reference_manual/\
-       dm00151940-stm32l41xxx42xxx43xxx44xxx45xxx46xxx-advanced-armbased-32bit-mcus-stmicroelectronics.pdf).
+       its spec can be found on the [STM32L4 Reference Manual][1].
         We need to wrap it with `KEEP()` because it's not explicitly referenced anywhere else in the program, but it
         must be kept and stored at the start of the FLASH memory.
     2. `.text`: the program instructions for our firmware.
@@ -44,14 +43,11 @@ The main firmware of this example is just a simple blinky program, whose aim is 
 frequency. In the NUCLEO-L452RE-P board used for this example, the LED we want to toggle is found on the pin `PB13`.
 
 Before toggling the LED, the clock (and also the FLASH memory) need to be configured. The aim is to have the clock run
-at its maximum frequency (80 MHz), so as per the documentation ([RM0394, section 3.3.3](https://www.st.com/content/ccc/\
-resource/technical/document/reference_manual/group0/b0/ac/3e/8f/6d/21/47/af/DM00151940/files/DM00151940.pdf/\
-jcr:content/translations/en.DM00151940.pdf)) the FLASH's wait states need to be set at 4. Since we're configuring the
+at its maximum frequency (80 MHz), so as per the documentation ([RM0394, section 3.3.3][2]) the FLASH's wait states need to be set at 4. Since we're configuring the
 FLASH, we can also enable prefetch and instruction/data cache, in order to get the maximum performance.
 
 Concerning the clock, the easiest solution to achieve maximum speed is to use the internal oscillator (HSI), which runs
-at 16 MHz. As explained in the documentation ([DS11912, section 3.11, fig. 4](https://www.st.com/resource/en/datasheet/\
-stm32l452re.pdf)), we need to use the main PLL in order to ramp up the speed to 80 MHz. This PLL produces a main output
+at 16 MHz. As explained in the documentation ([DS11912, section 3.11, fig. 4][3]), we need to use the main PLL in order to ramp up the speed to 80 MHz. This PLL produces a main output
 clock whose frequency is given by the following formula:
 
 ```
@@ -68,3 +64,10 @@ in the case of `PLLCLK`) to `0`. Finally, we need to enable the PLL and tell Sys
 
 Once we enable clock feed to the port of the LED pin (`GPIOB`) and configure it in output mode, we can toggle the pin
 to turn on/off the LED. A simple empty for loop is added to delay each toggle for the LED blinking to be visible.
+
+
+
+<!-- Links -->
+[1]: https://www.st.com/resource/en/reference_manual/\dm00151940-stm32l41xxx42xxx43xxx44xxx45xxx46xxx-advanced-armbased-32bit-mcus-stmicroelectronics.pdf
+[2]: https://www.st.com/content/ccc/resource/technical/document/reference_manual/group0/b0/ac/3e/8f/6d/21/47/af/DM00151940/files/DM00151940.pdf/jcr:content/translations/en.DM00151940.pdf
+[3]: https://www.st.com/resource/en/datasheet/stm32l452re.pdf
